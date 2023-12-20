@@ -48,16 +48,7 @@ fn find_digit(line: &str, chars: Vec<(usize, char)>) -> Option<u32> {
 
 fn get_numeral(input: &str) -> Option<u32> {
     static NUMERALS: &[&str] = &[
-        "_",
-        "one",
-        "two",
-        "three",
-        "four",
-        "five",
-        "six",
-        "seven",
-        "eight",
-        "nine",
+        "_", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
     ];
 
     for (value, numeral) in NUMERALS.iter().enumerate() {

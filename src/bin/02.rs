@@ -1,25 +1,32 @@
 advent_of_code::solution!(2);
 
-use std::cmp::max;
 use regex::Regex;
+use std::cmp::max;
 
 // We could probably do this without regexes, but I'm sure we'll have to use them at some point anyway
 pub fn part_one(input: &str) -> Option<u32> {
-    let answer = input.lines().enumerate().filter_map(|(i, line)| {
-        let regex = Regex::new("(\\d+) (blue|red|green)").unwrap();
-        let captures = regex.captures_iter(line);
-        for cap in captures {
-            // Fun with match statements
-            match (cap.get(1).unwrap().as_str().parse::<u32>().unwrap(), cap.get(2).unwrap().as_str()) {
-                (n, "red") if n > 12 => return None,
-                (n, "green") if n > 13 => return None,
-                (n, "blue") if n > 14 => return None,
-                (_, _) => continue
+    let answer = input
+        .lines()
+        .enumerate()
+        .filter_map(|(i, line)| {
+            let regex = Regex::new("(\\d+) (blue|red|green)").unwrap();
+            let captures = regex.captures_iter(line);
+            for cap in captures {
+                // Fun with match statements
+                match (
+                    cap.get(1).unwrap().as_str().parse::<u32>().unwrap(),
+                    cap.get(2).unwrap().as_str(),
+                ) {
+                    (n, "red") if n > 12 => return None,
+                    (n, "green") if n > 13 => return None,
+                    (n, "blue") if n > 14 => return None,
+                    (_, _) => continue,
+                }
             }
-        }
 
-        Some((i+1) as u32)
-    }).sum();
+            Some((i + 1) as u32)
+        })
+        .sum();
 
     Some(answer)
 }
@@ -39,22 +46,32 @@ impl From<Cubes> for u32 {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    let answer = input.lines().map(|line| {
-        let mut cubes = Cubes {red: 0, green: 0, blue: 0};
-        let regex = Regex::new("(\\d+) (blue|red|green)").unwrap();
-        let captures = regex.captures_iter(line);
-        for cap in captures {
-            match (cap.get(1).unwrap().as_str().parse::<u32>().unwrap(), cap.get(2).unwrap().as_str()) {
-                (n, "red") => cubes.red = max(n,cubes.red),
-                (n, "green") => cubes.green = max(n, cubes.green),
-                (n, "blue") => cubes.blue = max(n, cubes.blue),
-                (_, _) => panic!()
+    let answer = input
+        .lines()
+        .map(|line| {
+            let mut cubes = Cubes {
+                red: 0,
+                green: 0,
+                blue: 0,
+            };
+            let regex = Regex::new("(\\d+) (blue|red|green)").unwrap();
+            let captures = regex.captures_iter(line);
+            for cap in captures {
+                match (
+                    cap.get(1).unwrap().as_str().parse::<u32>().unwrap(),
+                    cap.get(2).unwrap().as_str(),
+                ) {
+                    (n, "red") => cubes.red = max(n, cubes.red),
+                    (n, "green") => cubes.green = max(n, cubes.green),
+                    (n, "blue") => cubes.blue = max(n, cubes.blue),
+                    (_, _) => panic!(),
+                }
             }
-        }
 
-        // Can't find a way to have Rust infer the type :(
-        u32::from(cubes)
-    }).sum();
+            // Can't find a way to have Rust infer the type :(
+            u32::from(cubes)
+        })
+        .sum();
 
     Some(answer)
 }

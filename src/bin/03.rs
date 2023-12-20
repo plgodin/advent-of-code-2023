@@ -14,19 +14,21 @@ struct Number {
 impl Number {
     fn is_adjacent(&self, pos: &Position) -> bool {
         let width = (self.value.ilog10() + 1) as i32;
-        pos.x >= self.pos.x - 1 &&
-            pos.x <= self.pos.x + width &&
-            pos.y >= self.pos.y - 1 &&
-            pos.y <= self.pos.y + 1
+        pos.x >= self.pos.x - 1
+            && pos.x <= self.pos.x + width
+            && pos.y >= self.pos.y - 1
+            && pos.y <= self.pos.y + 1
     }
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
     let (numbers, symbols) = parse_input(input, false)?;
 
-    let answer = numbers.iter().filter(|num| {
-        symbols.iter().any(|s| {num.is_adjacent(s)})
-    }).map(|num| num.value).sum();
+    let answer = numbers
+        .iter()
+        .filter(|num| symbols.iter().any(|s| num.is_adjacent(s)))
+        .map(|num| num.value)
+        .sum();
 
     Some(answer)
 }
@@ -42,16 +44,22 @@ fn parse_input(input: &str, stars_only: bool) -> Option<(Vec<Number>, Vec<Positi
         for m in number_regex.find_iter(line) {
             numbers.push(Number {
                 value: m.as_str().parse().ok()?,
-                pos: Position { x: m.start() as i32, y: y as i32 }
+                pos: Position {
+                    x: m.start() as i32,
+                    y: y as i32,
+                },
             });
         }
         // Find all symbols
         for m in symbol_regex.find_iter(line) {
             if m.as_str() == "*" || !stars_only {
-                symbols.push(Position { x: m.start() as i32, y: y as i32 })
+                symbols.push(Position {
+                    x: m.start() as i32,
+                    y: y as i32,
+                })
             }
         }
-    };
+    }
     Some((numbers, symbols))
 }
 
@@ -59,9 +67,15 @@ pub fn part_two(input: &str) -> Option<u32> {
     let (numbers, stars) = parse_input(input, true)?;
 
     let gear_ratios = stars.iter().filter_map(|s| {
-        let adjacent_numbers = numbers.iter().filter(|&n| {n.is_adjacent(s)}).collect::<Vec<_>>();
-        if adjacent_numbers.len() == 2 { Some(adjacent_numbers.iter().map(|n| n.value).product::<u32>()) }
-        else { None }
+        let adjacent_numbers = numbers
+            .iter()
+            .filter(|&n| n.is_adjacent(s))
+            .collect::<Vec<_>>();
+        if adjacent_numbers.len() == 2 {
+            Some(adjacent_numbers.iter().map(|n| n.value).product::<u32>())
+        } else {
+            None
+        }
     });
 
     Some(gear_ratios.sum())
